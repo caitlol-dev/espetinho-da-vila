@@ -470,12 +470,29 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .section { width: min(100% - 30px, 1180px); }
   .hero-copy { font-size: 16px; }
   .hero-note {
-    width: calc(100% - 40px);
-    max-width: 280px;
-    gap: 14px;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 15px;
+    bottom: 18px;
   }
-  .hero-note strong { font-size: 11px; }
-  .hero-note span { font-size: 30px; }
+  .hero-note strong {
+    font-size: 9px;
+    letter-spacing: .13em;
+    margin-bottom: 1px;
+  }
+  .hero-note span {
+    font-size: 21px;
+    line-height: 1.05;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    flex-basis: 8px;
+    box-shadow: 0 0 0 5px rgba(98,190,107,.12);
+  }
   .hero-actions { align-items: stretch; }
   .hero-actions .button { flex: 1 1 100%; }
   .feature-grid { grid-template-columns: 1fr; gap: 12px; }
