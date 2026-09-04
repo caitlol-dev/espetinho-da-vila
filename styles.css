@@ -1661,3 +1661,144 @@ body.modal-open { overflow: hidden; }
     border-radius: 10px;
   }
 }
+
+/* Cardápio atualizado a partir das imagens de /assets */
+.menu-item-card.category-bebidas .menu-item-image {
+  background: #f7f2ea;
+}
+.menu-item-card.category-bebidas .menu-item-image img {
+  object-fit: contain;
+  padding: 14px;
+}
+.menu-item-card:not(.category-bebidas) .menu-item-image img {
+  object-fit: cover;
+}
+.price-consult {
+  font-size: 14px !important;
+  color: #74695f;
+}
+.choice-hint {
+  display: block;
+  margin-top: 8px;
+  color: #9b6525;
+  font-size: 12px;
+  font-weight: 700;
+}
+.cart-item-option {
+  color: #9b6525 !important;
+  font-weight: 700;
+}
+
+/* Seletor do espetinho da Jantinha */
+body.choice-open { overflow: hidden; }
+.choice-modal {
+  position: fixed;
+  z-index: 110;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .16s ease;
+}
+.choice-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.choice-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,8,7,.74);
+}
+.choice-dialog {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(780px, calc(100dvh - 40px));
+  overflow: auto;
+  padding: 26px;
+  border-radius: 24px;
+  background: #fffaf3;
+  box-shadow: 0 26px 70px rgba(0,0,0,.34);
+  transform: translateY(8px);
+  transition: transform .16s ease;
+}
+.choice-modal.open .choice-dialog { transform: translateY(0); }
+.choice-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.choice-header .eyebrow { margin-bottom: 7px; }
+.choice-header h2 {
+  margin: 0;
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(34px, 5vw, 52px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.choice-close {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+.choice-help {
+  margin: 13px 0 22px;
+  color: #6e645b;
+  font-size: 14px;
+}
+.skewer-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+}
+.skewer-choice-card {
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(23,20,17,.1);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.skewer-choice-card:hover,
+.skewer-choice-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(201,136,46,.72);
+  box-shadow: 0 10px 24px rgba(35,25,14,.1);
+  outline: none;
+}
+.skewer-choice-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.skewer-choice-card span {
+  display: block;
+  padding: 13px 14px 15px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+@media (max-width: 700px) {
+  .choice-modal { padding: 0; align-items: end; }
+  .choice-dialog {
+    width: 100%;
+    max-height: 88dvh;
+    padding: 22px 18px 24px;
+    border-radius: 24px 24px 0 0;
+  }
+  .skewer-choice-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+  .skewer-choice-card span { padding: 11px 12px 13px; font-size: 13px; }
+}
