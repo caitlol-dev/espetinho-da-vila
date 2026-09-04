@@ -60,7 +60,7 @@ const MENU_ITEMS = [
     description: 'Jantinha acompanhada de um espetinho à sua escolha.',
     category: 'combos',
     price: 27,
-    image: 'assets/Jantinha_Espetinho.png',
+    image: 'assets/jantinha_espetinho.png',
     requiresSkewer: true
   },
 
