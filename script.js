@@ -61,12 +61,12 @@ const MENU_ITEMS = [
 
   { id: 'lanche-pao-frances', name: 'Lanche no pão francês', description: 'Vinagrete + espeto', category: 'lanches', price: 15, image: 'assets/cardapio-espetos.jpeg' },
 
-  { id: 'agua', name: 'Água', category: 'bebidas', price: 5 },
-  { id: 'agua-gas', name: 'Água com gás', category: 'bebidas', price: 6 },
-  { id: 'refrigerante-lata', name: 'Refrigerante lata', category: 'bebidas', price: 7 },
-  { id: 'suco-del-valle', name: 'Suco Del Valle lata', category: 'bebidas', price: 8 },
-  { id: 'suco-laranja', name: 'Suco natural de laranja', category: 'bebidas', price: 12 },
-  { id: 'red-bull', name: 'Red Bull', category: 'bebidas', price: 15 }
+  { id: 'agua', name: 'Água', category: 'bebidas', price: 5, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'agua-gas', name: 'Água com gás', category: 'bebidas', price: 6, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'refrigerante-lata', name: 'Refrigerante lata', category: 'bebidas', price: 7, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'suco-del-valle', name: 'Suco Del Valle lata', category: 'bebidas', price: 8, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'suco-laranja', name: 'Suco natural de laranja', category: 'bebidas', price: 12, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'red-bull', name: 'Red Bull', category: 'bebidas', price: 15, image: 'assets/cardapio-prato.jpeg' }
 ];
 
 const CATEGORY_LABELS = {
@@ -219,9 +219,14 @@ function renderCart() {
     total += subtotal;
     return `
       <article class="cart-item-row">
-        <div class="cart-item-info">
-          <strong>${item.name}</strong>
-          <span>${formatBRL(item.price)} cada</span>
+        <div class="cart-item-main">
+          <div class="cart-item-thumb">
+            <img src="${item.image || 'assets/cardapio-prato.jpeg'}" alt="${item.name}" loading="lazy">
+          </div>
+          <div class="cart-item-info">
+            <strong>${item.name}</strong>
+            <span>${formatBRL(item.price)} cada</span>
+          </div>
         </div>
         <div class="cart-item-actions">
           <div class="qty-control" aria-label="Quantidade de ${item.name}">
