@@ -1188,3 +1188,176 @@ body.modal-open { overflow: hidden; }
   .cart-remove { justify-self: start; }
   .cart-footer { padding: 18px; }
 }
+
+
+/* Ajustes 04/09 — horários, carrinho e cardápio com fotos */
+.hero-photo {
+  background-image: url("assets/prato-principal.jpeg");
+  background-position: 58% 46%;
+  background-size: cover;
+  filter: saturate(1.12) contrast(1.05) brightness(.88);
+  transform: scale(1.035);
+}
+.hero-shade {
+  background:
+    radial-gradient(circle at 73% 42%, rgba(0,0,0,.03) 0 24%, rgba(0,0,0,.25) 66%),
+    linear-gradient(90deg, rgba(11,9,7,.92) 0%, rgba(11,9,7,.78) 39%, rgba(11,9,7,.26) 74%, rgba(11,9,7,.38) 100%),
+    linear-gradient(0deg, rgba(11,9,7,.9) 0%, rgba(11,9,7,.12) 58%);
+}
+.hero-hours-note small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255,255,255,.66);
+  font-size: 11px;
+  font-weight: 600;
+}
+.catalog-ifood-link {
+  border: 1px solid #ea1d2c;
+  color: #c91422;
+  background: transparent;
+}
+.catalog-ifood-link:hover { background: #ea1d2c; color: white; }
+.catalog-note a { font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Horários agora são a segunda seção da página */
+.hours {
+  width: min(1180px, calc(100% - 40px));
+  padding: 28px 0 110px;
+  scroll-margin-top: 80px;
+}
+.hours-panel {
+  min-height: 490px;
+  grid-template-columns: 1.05fr .95fr;
+  gap: clamp(40px, 7vw, 90px);
+  background:
+    linear-gradient(90deg, rgba(17,14,11,.97), rgba(17,14,11,.78)),
+    url("assets/fachada-3.jpeg") center 45% / cover;
+}
+.hours-main { align-self: end; }
+.hours-schedule {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  padding: 8px 0;
+}
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255,255,255,.14);
+}
+.hours-row span { color: rgba(255,255,255,.62); font-size: 14px; }
+.hours-row strong { text-align: right; font-size: 15px; }
+.hours-row.highlight strong { color: var(--gold-light); }
+.hours-actions { margin-top: 24px; gap: 10px; }
+.hours-ifood,
+.hours-whatsapp {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255,255,255,.84);
+}
+.hours-ifood { color: #ff5360; }
+
+/* Cards do cardápio com fotos */
+.menu-items-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.menu-item-card {
+  min-height: 168px;
+  display: grid;
+  grid-template-columns: 152px minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.menu-item-image {
+  min-height: 168px;
+  background: #211d19;
+  overflow: hidden;
+}
+.menu-item-image img {
+  width: 100%;
+  height: 100%;
+  min-height: 168px;
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+.menu-item-card:hover .menu-item-image img { transform: scale(1.04); }
+.menu-item-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+}
+.menu-item-card:not(:has(.menu-item-image)) { grid-template-columns: 1fr; }
+
+/* Modal do carrinho */
+.cart-header { align-items: center; }
+.cart-title-wrap { min-width: 0; }
+.cart-header-actions { display: flex; align-items: center; gap: 10px; }
+.cart-clear {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid #e12e38;
+  border-radius: 8px;
+  background: transparent;
+  color: #d8232e;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.cart-clear svg { width: 15px; height: 15px; fill: currentColor; }
+.cart-clear:hover { background: rgba(225,46,56,.08); }
+.cart-clear:disabled { opacity: .38; cursor: not-allowed; }
+.cart-ifood-button {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  border: 1px solid rgba(234,29,44,.45);
+  border-radius: 12px;
+  color: #c91422;
+  font-size: 13px;
+  font-weight: 800;
+}
+.cart-ifood-button:hover { background: rgba(234,29,44,.07); }
+
+@media (max-width: 900px) {
+  .hours-panel { grid-template-columns: 1fr; min-height: 0; }
+  .hours-main { align-self: auto; }
+  .menu-item-card { grid-template-columns: 128px minmax(0, 1fr); }
+}
+
+@media (max-width: 590px) {
+  .hero-photo { background-position: 58% center; filter: saturate(1.08) contrast(1.04) brightness(.82); }
+  .hero-hours-note small { font-size: 9px; }
+  .catalog-heading-actions { width: 100%; }
+  .catalog-ifood-link { width: 100%; }
+  .hours { width: min(100% - 30px, 1180px); padding: 20px 0 75px; }
+  .hours-panel { min-height: 0; padding: 28px 24px; }
+  .hours h2 { font-size: 44px; }
+  .hours-row { gap: 16px; padding: 15px 0; }
+  .hours-row span { font-size: 13px; }
+  .hours-row strong { font-size: 13px; }
+  .menu-items-grid { grid-template-columns: 1fr; }
+  .menu-item-card { min-height: 132px; grid-template-columns: 112px minmax(0, 1fr); }
+  .menu-item-image, .menu-item-image img { min-height: 132px; }
+  .menu-item-body { padding: 16px; gap: 14px; }
+  .menu-item-copy h3 { font-size: 21px; }
+  .menu-item-footer { align-items: flex-end; }
+  .add-item-button { padding: 9px 12px; }
+  .cart-header { gap: 10px; }
+  .cart-header-actions { gap: 7px; }
+  .cart-clear { min-height: 34px; padding: 0 9px; }
+  .cart-clear span { display: none; }
+  .cart-clear svg { width: 17px; height: 17px; }
+}

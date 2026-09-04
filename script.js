@@ -40,26 +40,26 @@ const year = document.getElementById('year');
 if (year) year.textContent = new Date().getFullYear();
 
 const MENU_ITEMS = [
-  { id: 'carne', name: 'Carne', category: 'espetos', price: 12 },
-  { id: 'frango', name: 'Frango', category: 'espetos', price: 12 },
-  { id: 'coracao', name: 'Coração', category: 'espetos', price: 12 },
-  { id: 'misto', name: 'Misto', category: 'espetos', price: 12 },
-  { id: 'linguica', name: 'Linguiça', category: 'espetos', price: 12 },
-  { id: 'linguica-apimentada', name: 'Linguiça apimentada', category: 'espetos', price: 12 },
-  { id: 'kafta', name: 'Kafta', category: 'espetos', price: 12 },
-  { id: 'pao-de-alho', name: 'Pão de alho', category: 'espetos', price: 10 },
-  { id: 'pao-de-alho-gourmet', name: 'Pão de alho gourmet', category: 'espetos', price: 13 },
-  { id: 'queijo-coalho', name: 'Queijo coalho', category: 'espetos', price: 10 },
-  { id: 'medalhao', name: 'Medalhão', category: 'espetos', price: 12 },
-  { id: 'tulipinha', name: 'Tulipinha', category: 'espetos', price: 12 },
+  { id: 'carne', name: 'Carne', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
+  { id: 'frango', name: 'Frango', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
+  { id: 'coracao', name: 'Coração', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
+  { id: 'misto', name: 'Misto', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
+  { id: 'linguica', name: 'Linguiça', category: 'espetos', price: 12, image: 'assets/cardapio-linguica.jpeg' },
+  { id: 'linguica-apimentada', name: 'Linguiça apimentada', category: 'espetos', price: 12, image: 'assets/cardapio-linguica.jpeg' },
+  { id: 'kafta', name: 'Kafta', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
+  { id: 'pao-de-alho', name: 'Pão de alho', category: 'espetos', price: 10, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'pao-de-alho-gourmet', name: 'Pão de alho gourmet', category: 'espetos', price: 13, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'queijo-coalho', name: 'Queijo coalho', category: 'espetos', price: 10, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'medalhao', name: 'Medalhão', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
+  { id: 'tulipinha', name: 'Tulipinha', category: 'espetos', price: 12, image: 'assets/cardapio-espetos.jpeg' },
 
-  { id: 'jantinha', name: 'Jantinha', description: 'Arroz carreteiro, farofa e vinagrete', category: 'acompanhamentos', price: 18 },
-  { id: 'arroz-carreteiro', name: 'Arroz carreteiro', category: 'acompanhamentos', price: 12 },
-  { id: 'vinagrete', name: 'Vinagrete', category: 'acompanhamentos', price: 4 },
-  { id: 'farofa', name: 'Farofa', category: 'acompanhamentos', price: 4 },
-  { id: 'pao', name: 'Pão', category: 'acompanhamentos', price: 4 },
+  { id: 'jantinha', name: 'Jantinha', description: 'Arroz carreteiro, farofa e vinagrete', category: 'acompanhamentos', price: 18, image: 'assets/cardapio-prato.jpeg' },
+  { id: 'arroz-carreteiro', name: 'Arroz carreteiro', category: 'acompanhamentos', price: 12, image: 'assets/cardapio-arroz.jpeg' },
+  { id: 'vinagrete', name: 'Vinagrete', category: 'acompanhamentos', price: 4, image: 'assets/cardapio-vinagrete.jpeg' },
+  { id: 'farofa', name: 'Farofa', category: 'acompanhamentos', price: 4, image: 'assets/cardapio-farofa.jpeg' },
+  { id: 'pao', name: 'Pão', category: 'acompanhamentos', price: 4, image: 'assets/cardapio-prato.jpeg' },
 
-  { id: 'lanche-pao-frances', name: 'Lanche no pão francês', description: 'Vinagrete + espeto', category: 'lanches', price: 15 },
+  { id: 'lanche-pao-frances', name: 'Lanche no pão francês', description: 'Vinagrete + espeto', category: 'lanches', price: 15, image: 'assets/cardapio-espetos.jpeg' },
 
   { id: 'agua', name: 'Água', category: 'bebidas', price: 5 },
   { id: 'agua-gas', name: 'Água com gás', category: 'bebidas', price: 6 },
@@ -99,6 +99,7 @@ const cartItems = document.getElementById('cart-items');
 const cartEmpty = document.getElementById('cart-empty');
 const cartTotal = document.getElementById('cart-total');
 const sendOrderButton = document.getElementById('send-whatsapp-order');
+const clearCartButton = document.getElementById('clear-cart');
 const cartCountNodes = document.querySelectorAll('[data-cart-count]');
 let activeCategory = 'all';
 
@@ -171,13 +172,16 @@ function renderCatalog() {
       <div class="menu-items-grid">
         ${items.map((item) => `
           <article class="menu-item-card">
-            <div class="menu-item-copy">
-              <h3>${item.name}</h3>
-              ${item.description ? `<p>${item.description}</p>` : ''}
-            </div>
-            <div class="menu-item-footer">
-              <strong>${formatBRL(item.price)}</strong>
-              <button type="button" class="add-item-button" data-add-item="${item.id}">Adicionar</button>
+            ${item.image ? `<div class="menu-item-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div>` : ''}
+            <div class="menu-item-body">
+              <div class="menu-item-copy">
+                <h3>${item.name}</h3>
+                ${item.description ? `<p>${item.description}</p>` : ''}
+              </div>
+              <div class="menu-item-footer">
+                <strong>${formatBRL(item.price)}</strong>
+                <button type="button" class="add-item-button" data-add-item="${item.id}">Adicionar</button>
+              </div>
             </div>
           </article>
         `).join('')}
@@ -201,11 +205,13 @@ function renderCart() {
     cartEmpty.hidden = false;
     cartTotal.textContent = formatBRL(0);
     sendOrderButton.disabled = true;
+    if (clearCartButton) clearCartButton.disabled = true;
     return;
   }
 
   cartEmpty.hidden = true;
   sendOrderButton.disabled = false;
+  if (clearCartButton) clearCartButton.disabled = false;
   let total = 0;
 
   cartItems.innerHTML = entries.map(({ item, qty }) => {
@@ -250,6 +256,16 @@ function renderCart() {
     button.addEventListener('click', () => setQuantity(button.dataset.cartRemove, 0));
   });
 }
+
+function clearCart() {
+  if (!cart.size) return;
+  cart.clear();
+  persistCart();
+  updateCartCount();
+  renderCart();
+}
+
+clearCartButton?.addEventListener('click', clearCart);
 
 function openCart() {
   if (!cartModal) return;
