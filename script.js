@@ -87,6 +87,17 @@ const MENU_ITEMS = [
   { id: 'del-valle-pessego', name: 'Del Valle Pêssego lata 290ml', category: 'bebidas', price: 8, image: 'assets/del valle pessego lata 290ml.png' },
   { id: 'del-valle-uva', name: 'Del Valle Uva lata 290ml', category: 'bebidas', price: 8, image: 'assets/del valle uva lata 290ml.png' },
   { id: 'redbull-250', name: 'Red Bull lata 250ml', category: 'bebidas', price: 15, image: 'assets/redbull lata 250ml.png' }
+  ,
+  { id: 'heineken-long-neck', name: 'Heineken Long Neck 330ml', category: 'bebidas', price: 13.00, image: 'assets/Cerveja Heineken Long Nek 330 Ml.png' },
+  { id: 'heineken-zero', name: 'Heineken Zero Long Neck 330ml', category: 'bebidas', price: 13.00, image: 'assets/Heineken Zero Long Neck 330 Ml.png' },
+  { id: 'cerveja-imperio', name: 'Cerveja Império Ultra 275ml', category: 'bebidas', price: 12.00, image: 'assets/Cerveja Imperio Ultra 275ml.png' },
+  { id: 'cerveja-original', name: 'Cerveja Original Lata 269ml', category: 'bebidas', price: 7.00, image: 'assets/Cerveja Original Lata 269 Ml.png' },
+  { id: 'corona', name: 'Corona Long Neck 330ml', category: 'bebidas', price: 13.00, image: 'assets/Corona Long Neck 330 Ml.png' },
+  { id: 'budweiser', name: 'Budweiser 330ml (vidro)', category: 'bebidas', price: 12.00, image: 'assets/Budweiser 330 Ml (vidro).png' },
+  { id: 'smirnoff-ice', name: 'Smirnoff Ice 275ml', category: 'bebidas', price: 12.90, image: 'assets/Long Neck Smirnoff Ice 275 Ml.png' },
+  { id: 'stella', name: 'Stella Long Neck 330ml', category: 'bebidas', price: 13.00, image: 'assets/Stella Long Neck 330 Ml.png' },
+  { id: 'skol-beats', name: 'Skol Beats Senses Azul 269ml', category: 'bebidas', price: 12.90, image: 'assets/Skol Beats Senses Azul Long Neck 269 Ml.png' },
+  { id: 'skol-lata', name: 'Skol Lata 269ml', category: 'bebidas', price: 7.00, image: 'assets/Skol Lata 269 Ml.png' }
 ];
 
 const CATEGORY_LABELS = {
