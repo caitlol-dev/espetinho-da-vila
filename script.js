@@ -59,17 +59,17 @@ const MENU_ITEMS = [
     name: 'Jantinha + espetinho',
     description: 'Jantinha acompanhada de um espetinho à sua escolha.',
     category: 'combos',
-    price: null,
-    image: 'assets/Jantinha + Espetinho.png',
+    price: 27,
+    image: 'assets/Jantinha_Espetinho.png',
     requiresSkewer: true
   },
 
   { id: 'farofa', name: 'Farofa', category: 'acompanhamentos', price: 4, image: 'assets/Farofa.png' },
   { id: 'vinagrete', name: 'Vinagrete', category: 'acompanhamentos', price: 4, image: 'assets/Vinagrete.png' },
 
-  { id: 'x-burguer-artesanal', name: 'X-Burguer Artesanal', category: 'lanches', price: null, image: 'assets/X - Burguer Artesanal.png' },
-  { id: 'x-salada-artesanal', name: 'Lanche X-Salada Artesanal', category: 'lanches', price: null, image: 'assets/Lanche X- Salada Artesanal.png' },
-  { id: 'lanche-baguette', name: 'Lanche na Baguette', category: 'lanches', price: null, image: 'assets/Lanche na Baguette.png' },
+  { id: 'x-burguer-artesanal', name: 'X-Burguer Artesanal', category: 'lanches', price: 19.90, image: 'assets/X - Burguer Artesanal.png' },
+  { id: 'x-salada-artesanal', name: 'Lanche X-Salada Artesanal', category: 'lanches', price: 19.90, image: 'assets/Lanche X- Salada Artesanal.png' },
+  { id: 'lanche-baguette', name: 'Lanche na Baguette', category: 'lanches', price: 21.99, image: 'assets/Lanche na Baguette.png' },
 
   { id: 'agua-sem-gas', name: 'Água mineral sem gás 510ml', category: 'bebidas', price: 5, image: 'assets/Agua mineral sem gas 510ml.png' },
   { id: 'agua-com-gas', name: 'Água mineral com gás 510ml', category: 'bebidas', price: 6, image: 'assets/Agua mineral com gas 510ml.png' },
