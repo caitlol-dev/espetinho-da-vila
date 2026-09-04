@@ -38,7 +38,7 @@ document.addEventListener('click', (event) => {
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
-const revealTargets = document.querySelectorAll('.intro, .feature-card, .gallery-item, .hours-panel');
+const revealTargets = document.querySelectorAll('.intro, .feature-card, .menu-panel, .menu-steps article, .gallery-item, .location-grid, .hours-panel');
 revealTargets.forEach((element) => element.classList.add('reveal'));
 
 if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
