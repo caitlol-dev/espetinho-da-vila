@@ -60,7 +60,7 @@ const MENU_ITEMS = [
     description: 'Jantinha acompanhada de um espetinho à sua escolha.',
     category: 'combos',
     price: 27,
-    image: 'assets/jantinha_espetinho.png',
+    image: 'assets/jantinha.png?v=3',
     requiresSkewer: true
   },
 
@@ -258,7 +258,7 @@ function renderCatalog() {
       <div class="menu-items-grid">
         ${items.map((item) => `
           <article class="menu-item-card category-${item.category}">
-            <div class="menu-item-image"><img src="${item.image}" alt="${item.name}" loading="lazy"></div>
+            <div class="menu-item-image"><img data-item-image="${item.id}" src="${item.image}" alt="${item.name}" loading="${item.id === 'jantinha-espetinho' ? 'eager' : 'lazy'}" ${item.id === 'jantinha-espetinho' ? 'fetchpriority="high"' : ''}></div>
             <div class="menu-item-body">
               <div class="menu-item-copy">
                 <h3>${item.name}</h3>
@@ -275,6 +275,15 @@ function renderCatalog() {
       </div>
     </section>
   `).join('');
+
+  const jantinhaImage = catalogList.querySelector('[data-item-image="jantinha-espetinho"]');
+  if (jantinhaImage) {
+    jantinhaImage.addEventListener('error', () => {
+      if (jantinhaImage.dataset.fallbackApplied === '1') return;
+      jantinhaImage.dataset.fallbackApplied = '1';
+      jantinhaImage.src = 'assets/Jantinha_Espetinho.png?v=3';
+    });
+  }
 
   catalogList.querySelectorAll('[data-add-item]').forEach((button) => {
     button.addEventListener('click', () => addToCart(button.dataset.addItem));
