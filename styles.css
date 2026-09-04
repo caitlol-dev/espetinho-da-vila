@@ -640,8 +640,47 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 590px) {
-  .section { width: min(100% - 30px, 1180px); }
-  .hero-copy { font-size: 16px; }
+  .site-header {
+    height: 68px;
+    padding: 0 14px;
+  }
+  .brand img {
+    width: 42px;
+    height: 42px;
+  }
+  .menu-toggle {
+    padding: 6px;
+  }
+  .hero {
+    min-height: 100svh;
+    padding-top: 82px;
+  }
+  .hero-content {
+    margin: 0 18px 96px;
+  }
+  .eyebrow {
+    max-width: calc(100% - 56px);
+    margin-bottom: 12px;
+    font-size: 10px;
+    letter-spacing: .14em;
+  }
+  .hero h1 {
+    max-width: 330px;
+    font-size: clamp(44px, 15vw, 72px);
+    line-height: .92;
+  }
+  .hero-copy {
+    max-width: 330px;
+    margin-top: 16px;
+    font-size: 15px;
+  }
+  .hero-actions {
+    margin-top: 22px;
+    gap: 10px;
+  }
+  .hero-actions .button {
+    min-height: 48px;
+  }
   .hero-note {
     width: auto;
     max-width: none;
