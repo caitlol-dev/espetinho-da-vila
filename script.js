@@ -40,7 +40,6 @@ const year = document.getElementById('year');
 if (year) year.textContent = new Date().getFullYear();
 
 // Cardápio baseado nos arquivos existentes em /assets.
-// Itens sem preço confirmado ficam como "Consultar" para não inventar valor.
 const MENU_ITEMS = [
   { id: 'carne', name: 'Espetinho de carne', category: 'espetos', price: 10, image: 'assets/Espetinho de carne.png', skewer: true },
   { id: 'frango', name: 'Espetinho de frango', category: 'espetos', price: 10, image: 'assets/Espetinho de frango.png', skewer: true },
@@ -61,12 +60,31 @@ const MENU_ITEMS = [
     description: 'Jantinha acompanhada de um espetinho à sua escolha.',
     category: 'combos',
     price: 27,
-    image: 'assets/jantinha.png?v=3',
+    image: 'assets/jantinha.png?v=4',
     requiresSkewer: true
+  },
+  { id: 'feijao-corda', name: 'Feijão de Corda (Porção 120g)', category: 'combos', price: 11, image: 'assets/feijao-de-corda.png' },
+  {
+    id: 'batata-frita',
+    name: 'Batata Frita',
+    description: 'Escolha entre a porção pequena de 300g ou a grande de 500g.',
+    category: 'combos',
+    price: 15,
+    image: 'assets/batata-frita.png',
+    requiresVariant: true
   },
 
   { id: 'farofa', name: 'Farofa', category: 'acompanhamentos', price: 4, image: 'assets/Farofa.png' },
   { id: 'vinagrete', name: 'Vinagrete', category: 'acompanhamentos', price: 4, image: 'assets/Vinagrete.png' },
+  {
+    id: 'molhos',
+    name: 'Molhos',
+    description: 'Molho verde ou branco, em potes de 30ml ou 60ml.',
+    category: 'acompanhamentos',
+    price: 3,
+    image: 'assets/molhos-verde-branco.png',
+    requiresVariant: true
+  },
 
   { id: 'x-burguer-artesanal', name: 'X-Burguer Artesanal', category: 'lanches', price: 19.90, image: 'assets/X - Burguer Artesanal.png' },
   { id: 'x-salada-artesanal', name: 'Lanche X-Salada Artesanal', category: 'lanches', price: 19.90, image: 'assets/Lanche X- Salada Artesanal.png' },
@@ -102,6 +120,19 @@ const MENU_ITEMS = [
   { id: 'amstel-lata', name: 'Amstel Lata 269ml', category: 'bebidas', price: 6.00, image: 'assets/Cerveja Amstel Lata 269 Ml.png' }
 ];
 
+const PRODUCT_VARIANTS = {
+  'batata-frita': [
+    { id: 'pequena-300g', label: 'Pequena', detail: '300g', price: 15 },
+    { id: 'grande-500g', label: 'Grande', detail: '500g', price: 18 }
+  ],
+  'molhos': [
+    { id: 'verde-30ml', label: 'Molho verde', detail: '30ml', price: 3, group: 'Verde' },
+    { id: 'verde-60ml', label: 'Molho verde', detail: '60ml', price: 5, group: 'Verde' },
+    { id: 'branco-30ml', label: 'Molho branco', detail: '30ml', price: 3, group: 'Branco' },
+    { id: 'branco-60ml', label: 'Molho branco', detail: '60ml', price: 5, group: 'Branco' }
+  ]
+};
+
 const CATEGORY_LABELS = {
   espetos: 'Espetos',
   combos: 'Combos',
@@ -116,19 +147,34 @@ const formatBRL = (value) => Number(value).toLocaleString('pt-BR', {
 });
 
 function displayPrice(item) {
-  return item.price == null ? 'Consultar' : formatBRL(item.price);
+  if (item.price == null) return 'Consultar';
+  return item.requiresVariant ? `A partir de ${formatBRL(item.price)}` : formatBRL(item.price);
 }
 
 function getItem(id) {
   return MENU_ITEMS.find((item) => item.id === id);
 }
 
+function getVariant(itemId, variantId) {
+  return (PRODUCT_VARIANTS[itemId] || []).find((variant) => variant.id === variantId) || null;
+}
+
+function getSkewerLabel(item) {
+  return item?.name.replace('Espetinho de ', '').replace('Espetinho ', '') || '';
+}
+
 const SKEWER_OPTIONS = MENU_ITEMS.filter((item) => item.skewer);
 const skewerChoiceModal = document.getElementById('skewer-choice-modal');
 const skewerChoiceGrid = document.getElementById('skewer-choice-grid');
+const variantChoiceModal = document.getElementById('variant-choice-modal');
+const variantChoiceGrid = document.getElementById('variant-choice-grid');
+const variantChoiceEyebrow = document.getElementById('variant-choice-eyebrow');
+const variantChoiceTitle = document.getElementById('variant-choice-title');
+const variantChoiceHelp = document.getElementById('variant-choice-help');
+let activeVariantItemId = null;
 
-// O carrinho usa uma chave própria para permitir variações da Jantinha + espetinho.
-// Ex.: jantinha-espetinho::carne e jantinha-espetinho::frango ficam em linhas separadas.
+// O carrinho usa chaves próprias para guardar variações em linhas separadas.
+// Ex.: batata-frita::grande-500g e molhos::verde-30ml.
 const cart = new Map();
 try {
   const saved = JSON.parse(localStorage.getItem('espetoCart') || '{}');
@@ -153,8 +199,37 @@ let activeCategory = 'all';
 function parseCartKey(key) {
   const [id, optionId] = key.split('::');
   const item = getItem(id);
-  const option = optionId ? getItem(optionId) : null;
-  return { id, optionId, item, option };
+  if (!item) return { id, optionId, item: null, option: null, optionType: null };
+
+  if (item.requiresSkewer && optionId) {
+    const skewer = getItem(optionId);
+    return {
+      id,
+      optionId,
+      item,
+      option: skewer ? { id: skewer.id, label: getSkewerLabel(skewer), price: item.price } : null,
+      optionType: 'skewer'
+    };
+  }
+
+  if (item.requiresVariant && optionId) {
+    return { id, optionId, item, option: getVariant(id, optionId), optionType: 'variant' };
+  }
+
+  return { id, optionId, item, option: null, optionType: null };
+}
+
+function unitPrice(item, option) {
+  if (option?.price != null) return option.price;
+  return item?.price ?? null;
+}
+
+function optionLabel(item, option, optionType) {
+  if (!option) return '';
+  if (optionType === 'skewer') return `Com: ${option.label}`;
+  if (item.id === 'batata-frita') return `${option.label} • ${option.detail}`;
+  if (item.id === 'molhos') return `${option.label} • ${option.detail}`;
+  return [option.label, option.detail].filter(Boolean).join(' • ');
 }
 
 function persistCart() {
@@ -203,6 +278,11 @@ function addToCart(id, amount = 1) {
     return;
   }
 
+  if (item.requiresVariant) {
+    openVariantChoice(id);
+    return;
+  }
+
   addCartKey(id, amount);
   flashAdded(id);
 }
@@ -221,14 +301,13 @@ function openSkewerChoice() {
   skewerChoiceGrid.innerHTML = SKEWER_OPTIONS.map((option) => `
     <button type="button" class="skewer-choice-card" data-skewer-choice="${option.id}">
       <img src="${option.image}" alt="${option.name}" loading="lazy">
-      <span>${option.name.replace('Espetinho de ', '').replace('Espetinho ', '')}</span>
+      <span>${getSkewerLabel(option)}</span>
     </button>
   `).join('');
 
   skewerChoiceGrid.querySelectorAll('[data-skewer-choice]').forEach((button) => {
     button.addEventListener('click', () => {
-      const optionId = button.dataset.skewerChoice;
-      addCartKey(`jantinha-espetinho::${optionId}`, 1);
+      addCartKey(`jantinha-espetinho::${button.dataset.skewerChoice}`, 1);
       closeSkewerChoice();
       flashAdded('jantinha-espetinho');
     });
@@ -249,6 +328,75 @@ function closeSkewerChoice() {
 
 document.querySelectorAll('[data-close-skewer-choice]').forEach((button) => {
   button.addEventListener('click', closeSkewerChoice);
+});
+
+function variantModalCopy(item) {
+  if (item.id === 'batata-frita') {
+    return {
+      eyebrow: 'Batata frita',
+      title: 'Escolha o tamanho',
+      help: 'Selecione a porção que você quer adicionar ao carrinho.'
+    };
+  }
+  return {
+    eyebrow: 'Molhos',
+    title: 'Escolha o molho',
+    help: 'Escolha entre molho verde ou branco e depois o tamanho do pote.'
+  };
+}
+
+function openVariantChoice(itemId) {
+  const item = getItem(itemId);
+  const variants = PRODUCT_VARIANTS[itemId] || [];
+  if (!item || !variants.length || !variantChoiceModal || !variantChoiceGrid) return;
+
+  activeVariantItemId = itemId;
+  const copy = variantModalCopy(item);
+  if (variantChoiceEyebrow) variantChoiceEyebrow.textContent = copy.eyebrow;
+  if (variantChoiceTitle) variantChoiceTitle.textContent = copy.title;
+  if (variantChoiceHelp) variantChoiceHelp.textContent = copy.help;
+  variantChoiceGrid.classList.toggle('sauce-variants', itemId === 'molhos');
+
+  variantChoiceGrid.innerHTML = variants.map((variant) => itemId === 'molhos' ? `
+    <button type="button" class="sauce-choice-row" data-variant-choice="${variant.id}" aria-label="Adicionar ${variant.label} ${variant.detail} por ${formatBRL(variant.price)}">
+      <span class="sauce-choice-box" aria-hidden="true"></span>
+      <span class="sauce-choice-label">${variant.label} ${variant.detail}</span>
+      <strong>+ ${formatBRL(variant.price)}</strong>
+    </button>
+  ` : `
+    <button type="button" class="variant-choice-card" data-variant-choice="${variant.id}">
+      <span class="variant-choice-name">${variant.label}</span>
+      <span class="variant-choice-detail">${variant.detail}</span>
+      <strong>${formatBRL(variant.price)}</strong>
+    </button>
+  `).join('');
+
+  variantChoiceGrid.querySelectorAll('[data-variant-choice]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!activeVariantItemId) return;
+      addCartKey(`${activeVariantItemId}::${button.dataset.variantChoice}`, 1);
+      const addedItemId = activeVariantItemId;
+      closeVariantChoice();
+      flashAdded(addedItemId);
+    });
+  });
+
+  variantChoiceModal.classList.add('open');
+  variantChoiceModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('choice-open');
+  variantChoiceGrid.querySelector('button')?.focus();
+}
+
+function closeVariantChoice() {
+  if (!variantChoiceModal) return;
+  variantChoiceModal.classList.remove('open');
+  variantChoiceModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('choice-open');
+  activeVariantItemId = null;
+}
+
+document.querySelectorAll('[data-close-variant-choice]').forEach((button) => {
+  button.addEventListener('click', closeVariantChoice);
 });
 
 function renderCatalog() {
@@ -277,10 +425,11 @@ function renderCatalog() {
                 <h3>${item.name}</h3>
                 ${item.description ? `<p>${item.description}</p>` : ''}
                 ${item.requiresSkewer ? '<small class="choice-hint">Você escolhe o espetinho ao adicionar.</small>' : ''}
+                ${item.requiresVariant ? '<small class="choice-hint">Escolha a opção antes de adicionar.</small>' : ''}
               </div>
               <div class="menu-item-footer">
                 <strong class="${item.price == null ? 'price-consult' : ''}">${displayPrice(item)}</strong>
-                <button type="button" class="add-item-button" data-add-item="${item.id}">${item.requiresSkewer ? 'Escolher' : 'Adicionar'}</button>
+                <button type="button" class="add-item-button" data-add-item="${item.id}">${item.requiresSkewer || item.requiresVariant ? 'Escolher' : 'Adicionar'}</button>
               </div>
             </div>
           </article>
@@ -294,7 +443,7 @@ function renderCatalog() {
     jantinhaImage.addEventListener('error', () => {
       if (jantinhaImage.dataset.fallbackApplied === '1') return;
       jantinhaImage.dataset.fallbackApplied = '1';
-      jantinhaImage.src = 'assets/Jantinha_Espetinho.png?v=3';
+      jantinhaImage.src = 'assets/Jantinha_Espetinho.png?v=4';
     });
   }
 
@@ -326,9 +475,11 @@ function renderCart() {
   let total = 0;
   let hasUnpriced = false;
 
-  cartItems.innerHTML = entries.map(({ key, item, option, qty }) => {
-    const hasPrice = item.price != null;
-    const subtotal = hasPrice ? item.price * qty : null;
+  cartItems.innerHTML = entries.map(({ key, item, option, optionType, qty }) => {
+    const price = unitPrice(item, option);
+    const hasPrice = price != null;
+    const subtotal = hasPrice ? price * qty : null;
+    const detail = optionLabel(item, option, optionType);
     if (hasPrice) total += subtotal;
     else hasUnpriced = true;
 
@@ -340,8 +491,8 @@ function renderCart() {
           </div>
           <div class="cart-item-info">
             <strong>${item.name}</strong>
-            ${option ? `<span class="cart-item-option">Com: ${option.name.replace('Espetinho de ', '').replace('Espetinho ', '')}</span>` : ''}
-            <span>${hasPrice ? `${formatBRL(item.price)} cada` : 'Valor a confirmar'}</span>
+            ${detail ? `<span class="cart-item-option">${detail}</span>` : ''}
+            <span>${hasPrice ? `${formatBRL(price)} cada` : 'Valor a confirmar'}</span>
           </div>
         </div>
         <div class="cart-item-actions">
@@ -417,7 +568,8 @@ document.querySelectorAll('[data-category-filter]').forEach((button) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.key !== 'Escape') return;
-  if (skewerChoiceModal?.classList.contains('open')) closeSkewerChoice();
+  if (variantChoiceModal?.classList.contains('open')) closeVariantChoice();
+  else if (skewerChoiceModal?.classList.contains('open')) closeSkewerChoice();
   else if (cartModal?.classList.contains('open')) closeCart();
 });
 
@@ -431,13 +583,17 @@ sendOrderButton?.addEventListener('click', () => {
   let total = 0;
   let hasUnpriced = false;
 
-  const lines = entries.map(({ item, option, qty }) => {
-    const optionText = option ? ` (${option.name.replace('Espetinho de ', '').replace('Espetinho ', '')})` : '';
-    if (item.price == null) {
+  const lines = entries.map(({ item, option, optionType, qty }) => {
+    const price = unitPrice(item, option);
+    const detail = optionLabel(item, option, optionType);
+    const optionText = detail ? ` (${detail.replace('Com: ', '')})` : '';
+
+    if (price == null) {
       hasUnpriced = true;
       return `- ${qty}x ${item.name}${optionText} — valor a confirmar`;
     }
-    const subtotal = item.price * qty;
+
+    const subtotal = price * qty;
     total += subtotal;
     return `- ${qty}x ${item.name}${optionText} — ${formatBRL(subtotal)}`;
   });
