@@ -58,7 +58,7 @@ const MENU_ITEMS = [
     name: 'Jantinha + espetinho',
     description: '(feijão tropeiro, arroz, vinagrete, molho e espeto)',
     category: 'combos',
-    price: 27,
+    price: 23.90,
     image: 'assets/jantinha.png?v=4',
     requiresSkewer: true
   },
@@ -132,6 +132,25 @@ const PRODUCT_VARIANTS = {
   ]
 };
 
+// Molho incluído na Jantinha: apenas escolha do sabor, sem custo adicional.
+const JANTINHA_SAUCES = [
+  { id: 'verde', label: 'Molho verde' },
+  { id: 'branco', label: 'Molho branco' }
+];
+
+function getJantinhaSauce(sauceId) {
+  // Mantém compatibilidade com itens que possam ter ficado salvos no carrinho
+  // em uma versão anterior, quando o molho tinha tamanho/preço.
+  const legacyIds = {
+    'verde-30ml': 'verde',
+    'verde-60ml': 'verde',
+    'branco-30ml': 'branco',
+    'branco-60ml': 'branco'
+  };
+  const normalizedId = legacyIds[sauceId] || sauceId;
+  return JANTINHA_SAUCES.find((sauce) => sauce.id === normalizedId) || null;
+}
+
 const CATEGORY_LABELS = {
   espetos: 'Espetos',
   combos: 'Combos',
@@ -204,7 +223,7 @@ function parseCartKey(key) {
 
   if (item.requiresSkewer && optionId) {
     const skewer = getItem(optionId);
-    const sauce = extraOptionId ? getVariant('molhos', extraOptionId) : null;
+    const sauce = extraOptionId ? getJantinhaSauce(extraOptionId) : null;
 
     if (skewer && sauce) {
       return {
@@ -215,8 +234,8 @@ function parseCartKey(key) {
         option: {
           id: `${skewer.id}::${sauce.id}`,
           label: getSkewerLabel(skewer),
-          detail: `${sauce.label} ${sauce.detail}`,
-          price: Number(item.price || 0) + Number(sauce.price || 0),
+          detail: sauce.label,
+          price: Number(item.price || 0),
           skewer,
           sauce
         },
@@ -360,11 +379,10 @@ function openSkewerChoice() {
 
   const jantinhaSauceGrid = document.getElementById('jantinha-sauce-grid');
   if (jantinhaSauceGrid) {
-    jantinhaSauceGrid.innerHTML = (PRODUCT_VARIANTS.molhos || []).map((variant) => `
-      <button type="button" class="sauce-choice-row" data-jantinha-sauce-choice="${variant.id}" aria-pressed="false" aria-label="Selecionar ${variant.label} ${variant.detail} por ${formatBRL(variant.price)}">
+    jantinhaSauceGrid.innerHTML = JANTINHA_SAUCES.map((sauce) => `
+      <button type="button" class="sauce-choice-row" data-jantinha-sauce-choice="${sauce.id}" aria-pressed="false" aria-label="Selecionar ${sauce.label}">
         <span class="sauce-choice-box" aria-hidden="true"></span>
-        <span class="sauce-choice-label">${variant.label} ${variant.detail}</span>
-        <strong>+ ${formatBRL(variant.price)}</strong>
+        <span class="sauce-choice-label">${sauce.label}</span>
       </button>
     `).join('');
 
