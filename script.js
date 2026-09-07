@@ -344,9 +344,10 @@ function openSkewerChoice() {
   pendingJantinhaSauceId = null;
 
   skewerChoiceGrid.innerHTML = SKEWER_OPTIONS.map((option) => `
-    <button type="button" class="skewer-choice-card" data-skewer-choice="${option.id}" aria-pressed="false">
+    <button type="button" class="skewer-choice-card" data-skewer-choice="${option.id}" aria-pressed="false" aria-label="Selecionar espetinho de ${getSkewerLabel(option)}">
+      <span class="skewer-choice-box" aria-hidden="true"></span>
       <img src="${option.image}" alt="${option.name}" loading="lazy">
-      <span>${getSkewerLabel(option)}</span>
+      <span class="skewer-choice-label">${getSkewerLabel(option)}</span>
     </button>
   `).join('');
 

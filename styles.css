@@ -1992,3 +1992,89 @@ body.choice-open { overflow: hidden; }
   .jantinha-choice-section + .jantinha-choice-section { margin-top: 20px; }
   .jantinha-choice-section h3 { font-size: 19px; }
 }
+
+/* Mobile: espetinhos da Jantinha no mesmo padrão de lista dos molhos */
+.skewer-choice-box {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .jantinha-choice-dialog .skewer-choice-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid rgba(23, 20, 17, .12);
+    border-bottom: 1px solid rgba(23, 20, 17, .12);
+  }
+
+  .jantinha-choice-dialog .skewer-choice-card {
+    width: 100%;
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 13px 0;
+    overflow: visible;
+    border: 0;
+    border-bottom: 1px solid rgba(23, 20, 17, .10);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: left;
+    transform: none;
+    transition: background .15s ease, padding .15s ease;
+  }
+
+  .jantinha-choice-dialog .skewer-choice-card:last-child {
+    border-bottom: 0;
+  }
+
+  .jantinha-choice-dialog .skewer-choice-card:hover,
+  .jantinha-choice-dialog .skewer-choice-card:focus-visible,
+  .jantinha-choice-dialog .skewer-choice-card.selected,
+  .jantinha-choice-dialog .skewer-choice-card[aria-pressed="true"] {
+    transform: none;
+    border-color: transparent;
+    box-shadow: none;
+    background: rgba(201, 136, 46, .10);
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .jantinha-choice-dialog .skewer-choice-card img {
+    display: none;
+  }
+
+  .jantinha-choice-dialog .skewer-choice-box {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #b8b1a8;
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.9);
+  }
+
+  .jantinha-choice-dialog .skewer-choice-card:hover .skewer-choice-box,
+  .jantinha-choice-dialog .skewer-choice-card:focus-visible .skewer-choice-box,
+  .jantinha-choice-dialog .skewer-choice-card.selected .skewer-choice-box,
+  .jantinha-choice-dialog .skewer-choice-card[aria-pressed="true"] .skewer-choice-box {
+    border-color: #c9882e;
+    background: #c9882e;
+  }
+
+  .jantinha-choice-dialog .skewer-choice-card.selected .skewer-choice-box,
+  .jantinha-choice-dialog .skewer-choice-card[aria-pressed="true"] .skewer-choice-box {
+    box-shadow: inset 0 0 0 3px #fff;
+  }
+
+  .jantinha-choice-dialog .skewer-choice-label,
+  .jantinha-choice-dialog .skewer-choice-card span.skewer-choice-label {
+    display: block;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+}
