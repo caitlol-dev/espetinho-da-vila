@@ -52,18 +52,17 @@ const MENU_ITEMS = [
   { id: 'queijo-coalho', name: 'Espetinho de queijo coalho', category: 'espetos', price: 10, image: 'assets/Espetinho de queijo coalho.png', skewer: true },
   { id: 'tulipa', name: 'Espetinho de tulipa', category: 'espetos', price: 10, image: 'assets/Espetinho de tulipa.png', skewer: true },
   { id: 'pao-de-alho', name: 'Pão de alho', category: 'espetos', price: 10, image: 'assets/pao de alho.png' },
-  { id: 'pao-de-alho-gourmet', name: 'Pão de alho gourmet', category: 'espetos', price: 12, image: 'assets/pao de alho.png' },
 
   {
     id: 'jantinha-espetinho',
     name: 'Jantinha + espetinho',
-    description: 'Jantinha acompanhada de um espetinho à sua escolha.',
+    description: '(feijão tropeiro, arroz, vinagrete, molho e espeto)',
     category: 'combos',
     price: 27,
     image: 'assets/jantinha.png?v=4',
     requiresSkewer: true
   },
-  { id: 'feijao-corda', name: 'Feijão de Corda (Porção 120g)', category: 'combos', price: 11, image: 'assets/feijao-de-corda.png' },
+  { id: 'feijao-corda', name: 'Feijão de Corda (Porção 120g)', category: 'combos', price: 11, image: 'assets/feijao-de-corda.jpeg' },
   {
     id: 'batata-frita',
     name: 'Batata Frita',
@@ -172,6 +171,8 @@ const variantChoiceEyebrow = document.getElementById('variant-choice-eyebrow');
 const variantChoiceTitle = document.getElementById('variant-choice-title');
 const variantChoiceHelp = document.getElementById('variant-choice-help');
 let activeVariantItemId = null;
+let pendingJantinhaSkewerId = null;
+let pendingJantinhaSauceId = null;
 
 // O carrinho usa chaves próprias para guardar variações em linhas separadas.
 // Ex.: batata-frita::grande-500g e molhos::verde-30ml.
@@ -197,26 +198,47 @@ const cartCountNodes = document.querySelectorAll('[data-cart-count]');
 let activeCategory = 'all';
 
 function parseCartKey(key) {
-  const [id, optionId] = key.split('::');
+  const [id, optionId, extraOptionId] = key.split('::');
   const item = getItem(id);
-  if (!item) return { id, optionId, item: null, option: null, optionType: null };
+  if (!item) return { id, optionId, extraOptionId, item: null, option: null, optionType: null };
 
   if (item.requiresSkewer && optionId) {
     const skewer = getItem(optionId);
+    const sauce = extraOptionId ? getVariant('molhos', extraOptionId) : null;
+
+    if (skewer && sauce) {
+      return {
+        id,
+        optionId,
+        extraOptionId,
+        item,
+        option: {
+          id: `${skewer.id}::${sauce.id}`,
+          label: getSkewerLabel(skewer),
+          detail: `${sauce.label} ${sauce.detail}`,
+          price: Number(item.price || 0) + Number(sauce.price || 0),
+          skewer,
+          sauce
+        },
+        optionType: 'jantinha'
+      };
+    }
+
     return {
       id,
       optionId,
+      extraOptionId,
       item,
-      option: skewer ? { id: skewer.id, label: getSkewerLabel(skewer), price: item.price } : null,
+      option: skewer ? { id: skewer.id, label: getSkewerLabel(skewer), price: item.price, skewer } : null,
       optionType: 'skewer'
     };
   }
 
   if (item.requiresVariant && optionId) {
-    return { id, optionId, item, option: getVariant(id, optionId), optionType: 'variant' };
+    return { id, optionId, extraOptionId, item, option: getVariant(id, optionId), optionType: 'variant' };
   }
 
-  return { id, optionId, item, option: null, optionType: null };
+  return { id, optionId, extraOptionId, item, option: null, optionType: null };
 }
 
 function unitPrice(item, option) {
@@ -226,6 +248,7 @@ function unitPrice(item, option) {
 
 function optionLabel(item, option, optionType) {
   if (!option) return '';
+  if (optionType === 'jantinha') return `Espeto: ${option.label} • Molho: ${option.detail}`;
   if (optionType === 'skewer') return `Com: ${option.label}`;
   if (item.id === 'batata-frita') return `${option.label} • ${option.detail}`;
   if (item.id === 'molhos') return `${option.label} • ${option.detail}`;
@@ -295,11 +318,33 @@ function setQuantity(key, qty) {
   renderCart();
 }
 
+function updateJantinhaChoiceState() {
+  if (!skewerChoiceGrid) return;
+
+  skewerChoiceGrid.querySelectorAll('[data-skewer-choice]').forEach((button) => {
+    const selected = button.dataset.skewerChoice === pendingJantinhaSkewerId;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+
+  document.querySelectorAll('[data-jantinha-sauce-choice]').forEach((button) => {
+    const selected = button.dataset.jantinhaSauceChoice === pendingJantinhaSauceId;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+
+  const addButton = document.getElementById('add-jantinha-choice');
+  if (addButton) addButton.disabled = !(pendingJantinhaSkewerId && pendingJantinhaSauceId);
+}
+
 function openSkewerChoice() {
   if (!skewerChoiceModal || !skewerChoiceGrid) return;
 
+  pendingJantinhaSkewerId = null;
+  pendingJantinhaSauceId = null;
+
   skewerChoiceGrid.innerHTML = SKEWER_OPTIONS.map((option) => `
-    <button type="button" class="skewer-choice-card" data-skewer-choice="${option.id}">
+    <button type="button" class="skewer-choice-card" data-skewer-choice="${option.id}" aria-pressed="false">
       <img src="${option.image}" alt="${option.name}" loading="lazy">
       <span>${getSkewerLabel(option)}</span>
     </button>
@@ -307,11 +352,39 @@ function openSkewerChoice() {
 
   skewerChoiceGrid.querySelectorAll('[data-skewer-choice]').forEach((button) => {
     button.addEventListener('click', () => {
-      addCartKey(`jantinha-espetinho::${button.dataset.skewerChoice}`, 1);
-      closeSkewerChoice();
-      flashAdded('jantinha-espetinho');
+      pendingJantinhaSkewerId = button.dataset.skewerChoice;
+      updateJantinhaChoiceState();
     });
   });
+
+  const jantinhaSauceGrid = document.getElementById('jantinha-sauce-grid');
+  if (jantinhaSauceGrid) {
+    jantinhaSauceGrid.innerHTML = (PRODUCT_VARIANTS.molhos || []).map((variant) => `
+      <button type="button" class="sauce-choice-row" data-jantinha-sauce-choice="${variant.id}" aria-pressed="false" aria-label="Selecionar ${variant.label} ${variant.detail} por ${formatBRL(variant.price)}">
+        <span class="sauce-choice-box" aria-hidden="true"></span>
+        <span class="sauce-choice-label">${variant.label} ${variant.detail}</span>
+        <strong>+ ${formatBRL(variant.price)}</strong>
+      </button>
+    `).join('');
+
+    jantinhaSauceGrid.querySelectorAll('[data-jantinha-sauce-choice]').forEach((button) => {
+      button.addEventListener('click', () => {
+        pendingJantinhaSauceId = button.dataset.jantinhaSauceChoice;
+        updateJantinhaChoiceState();
+      });
+    });
+  }
+
+  const addButton = document.getElementById('add-jantinha-choice');
+  if (addButton) {
+    addButton.disabled = true;
+    addButton.onclick = () => {
+      if (!pendingJantinhaSkewerId || !pendingJantinhaSauceId) return;
+      addCartKey(`jantinha-espetinho::${pendingJantinhaSkewerId}::${pendingJantinhaSauceId}`, 1);
+      closeSkewerChoice();
+      flashAdded('jantinha-espetinho');
+    };
+  }
 
   skewerChoiceModal.classList.add('open');
   skewerChoiceModal.setAttribute('aria-hidden', 'false');
@@ -324,6 +397,8 @@ function closeSkewerChoice() {
   skewerChoiceModal.classList.remove('open');
   skewerChoiceModal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('choice-open');
+  pendingJantinhaSkewerId = null;
+  pendingJantinhaSauceId = null;
 }
 
 document.querySelectorAll('[data-close-skewer-choice]').forEach((button) => {
@@ -424,7 +499,7 @@ function renderCatalog() {
               <div class="menu-item-copy">
                 <h3>${item.name}</h3>
                 ${item.description ? `<p>${item.description}</p>` : ''}
-                ${item.requiresSkewer ? '<small class="choice-hint">Você escolhe o espetinho ao adicionar.</small>' : ''}
+                ${item.requiresSkewer ? '<small class="choice-hint">Você escolhe o espetinho e o molho ao adicionar.</small>' : ''}
                 ${item.requiresVariant ? '<small class="choice-hint">Escolha a opção antes de adicionar.</small>' : ''}
               </div>
               <div class="menu-item-footer">
