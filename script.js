@@ -116,7 +116,8 @@ const MENU_ITEMS = [
   { id: 'skol-beats', name: 'Skol Beats Senses Azul 269ml', category: 'bebidas', price: 10.00, image: 'assets/Skol Beats Senses Azul Long Neck 269 Ml.png' },
   { id: 'skol-lata', name: 'Skol Lata 269ml', category: 'bebidas', price: 5.00, image: 'assets/Skol Lata 269 Ml.png' },
   { id: 'heineken-lata', name: 'Heineken Lata 269ml', category: 'bebidas', price: 7.00, image: 'assets/Heineken Lata 269 Ml.png' },
-  { id: 'amstel-lata', name: 'Amstel Lata 269ml', category: 'bebidas', price: 6.00, image: 'assets/Cerveja Amstel Lata 269 Ml.png' }
+  { id: 'amstel-lata', name: 'Amstel Lata 269ml', category: 'bebidas', price: 6.00, image: 'assets/Cerveja Amstel Lata 269 Ml.png' },
+  { id: 'caipirinha', name: 'Caipirinha', category: 'bebidas', price: 21, image: 'assets/image_d935a6.jpg' },
 ];
 
 const PRODUCT_VARIANTS = {
